@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Layout from "../components/Layout";
+import SchedulePopup from "../components/SchedulePopup"; // ✅ Import popup
 
 export default function DoctorDetail() {
   const { id } = useParams();
   const [doctor, setDoctor] = useState(null);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
 
   useEffect(() => {
     axios
@@ -13,8 +15,33 @@ export default function DoctorDetail() {
       .then((res) => setDoctor(res.data))
       .catch((err) => console.error("Error fetching doctor detail:", err));
   }, [id]);
-  console.log("Doctor Detail:", doctor);
+
+  console.log(doctor);
   
+
+  const handleBook = async (schedule, selectedSlot) => {
+    try {
+      const token = localStorage.getItem("access");
+      await axios.post(
+        "http://127.0.0.1:8000/api/appointments/book/",
+        {
+          doctor: doctor.id,
+          schedule: schedule.id,
+          date: schedule.date,
+          appointment_time: selectedSlot
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      alert(`Appointment booked successfully at ${selectedSlot}`);
+      setSelectedSchedule(null);
+    } catch (err) {
+      alert("Failed to book appointment");
+      console.error(err);
+    }
+  };
+
   if (!doctor) return <Layout>Loading doctor details...</Layout>;
 
   return (
@@ -24,20 +51,15 @@ export default function DoctorDetail() {
         <p className="text-gray-700">Mobile: {doctor.mobile_number}</p>
         <p className="text-gray-700">Address: {doctor.address}</p>
 
-        <div className="mt-3">
-          <h3 className="text-lg font-semibold">Doctor Details</h3>
-          <p>License: {doctor.doctordetail?.license_number}</p>
-          <p>Experience: {doctor.doctordetail?.experience_years} years</p>
-          <p>Consultation Fee: {doctor.doctordetail?.consultation_fee} BDT</p>
-        </div>
-
+        {/* ✅ Schedule List */}
         <div className="mt-3">
           <h3 className="text-lg font-semibold">Schedules</h3>
           {doctor.schedules && doctor.schedules.length > 0 ? (
             doctor.schedules.map((s) => (
               <div
                 key={s.id}
-                className="border p-2 rounded mt-2 bg-blue-50 text-sm"
+                className="border p-2 rounded mt-2 bg-blue-50 text-sm cursor-pointer hover:bg-blue-100"
+                onClick={() => setSelectedSchedule(s)}
               >
                 <p>Date: {s.date}</p>
                 <p>
@@ -49,9 +71,15 @@ export default function DoctorDetail() {
             <p>No schedules available</p>
           )}
         </div>
-
-        {/* <button className="btn btn-success w-100 mt-4">Confirm Appointment</button> */}
       </div>
+
+      {/* ✅ Reusable Popup Component */}
+      <SchedulePopup
+        schedule={selectedSchedule}
+        doctor={doctor}
+        onClose={() => setSelectedSchedule(null)}
+        onBook={handleBook}
+      />
     </Layout>
   );
 }
