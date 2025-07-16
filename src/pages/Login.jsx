@@ -3,56 +3,56 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/login/", {
-        email,
-        password,
+      const res = await axios.post("http://127.0.0.1:8000/api/users/login/", {
+        mobile_number: mobileNumber,
+        password: password,
       });
-      localStorage.setItem("token", res.data.token);
+
+      // Save token and role in localStorage
+      localStorage.setItem("access", res.data.access);
       localStorage.setItem("role", res.data.role);
 
       // Redirect based on role
       res.data.role === "doctor"
         ? navigate("/doctor/dashboard")
-        : navigate("/patient/dashboard");
+        : navigate("/");
     } catch (err) {
-      alert("Invalid credentials");
+      alert("Invalid credentials or server error");
+      console.error(err);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded shadow-md w-80">
-        <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
+    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+      <div className="bg-white p-4 rounded shadow w-100" style={{ maxWidth: "360px" }}>
+        <h2 className="h4 fw-bold text-center mb-3">Login</h2>
         <form onSubmit={handleLogin}>
           <input
-            type="email"
-            placeholder="Email"
-            className="border p-2 mb-2 w-full rounded"
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Mobile Number"
+            className="form-control mb-2"
+            onChange={(e) => setMobileNumber(e.target.value)}
           />
           <input
             type="password"
             placeholder="Password"
-            className="border p-2 mb-4 w-full rounded"
+            className="form-control mb-3"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button
-            type="submit"
-            className="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700"
-          >
+          <button type="submit" className="btn btn-primary w-100">
             Login
           </button>
         </form>
-        <p className="text-center text-sm mt-3">
+        <p className="text-center small mt-3">
           Don't have an account?{" "}
-          <Link to="/register" className="text-blue-600 hover:underline">
+          <Link to="/register" className="text-primary text-decoration-underline">
             Register
           </Link>
         </p>

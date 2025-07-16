@@ -6,7 +6,7 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("patient"); // patient or doctor
+  const [role, setRole] = useState("patient");
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
@@ -26,45 +26,42 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded shadow-md w-80">
-        <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
+    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+      <div className="bg-white p-4 rounded shadow w-100" style={{ maxWidth: "400px" }}>
+        <h2 className="h4 fw-bold text-center mb-3">Register</h2>
         <form onSubmit={handleRegister}>
           <input
             type="text"
             placeholder="Full Name"
-            className="border p-2 mb-2 w-full rounded"
+            className="form-control mb-2"
             onChange={(e) => setName(e.target.value)}
           />
           <input
             type="email"
             placeholder="Email"
-            className="border p-2 mb-2 w-full rounded"
+            className="form-control mb-2"
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
             placeholder="Password"
-            className="border p-2 mb-2 w-full rounded"
+            className="form-control mb-2"
             onChange={(e) => setPassword(e.target.value)}
           />
           <select
-            className="border p-2 mb-4 w-full rounded"
+            className="form-select mb-3"
             onChange={(e) => setRole(e.target.value)}
           >
             <option value="patient">Patient</option>
             <option value="doctor">Doctor</option>
           </select>
-          <button
-            type="submit"
-            className="bg-green-600 text-white w-full py-2 rounded hover:bg-green-700"
-          >
+          <button type="submit" className="btn btn-success w-100">
             Register
           </button>
         </form>
-        <p className="text-center text-sm mt-3">
+        <p className="text-center small mt-3">
           Already have an account?{" "}
-          <Link to="/" className="text-blue-600 hover:underline">
+          <Link to="/" className="text-success text-decoration-underline">
             Login
           </Link>
         </p>

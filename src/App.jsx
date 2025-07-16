@@ -38,6 +38,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import DoctorDetail from "./pages/DoctorDetail";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/doctors/:id" element={<DoctorDetail />} />
         <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
