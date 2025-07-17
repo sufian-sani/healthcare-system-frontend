@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
 import DoctorProfile from "../components/profile/DoctorProfile";
+import PatientProfile from "../components/profile/PatientProfile";
 import PatientAppointments from "../components/profile/PatientAppointments";
 
 export default function Profile() {
@@ -36,7 +37,9 @@ export default function Profile() {
   if (!user) {
     return (
       <Layout>
-        <div className="alert alert-danger text-center">Failed to load profile</div>
+        <div className="alert alert-danger text-center">
+          Failed to load profile
+        </div>
       </Layout>
     );
   }
@@ -46,6 +49,7 @@ export default function Profile() {
       <div className="container" style={{ maxWidth: "700px" }}>
         <div className="card shadow-sm">
           <div className="card-body text-center">
+            {/* Profile Image */}
             <img
               src={
                 user.profile_image || "https://via.placeholder.com/100"
@@ -54,17 +58,22 @@ export default function Profile() {
               className="rounded-circle mb-3"
               style={{ width: "100px", height: "100px", objectFit: "cover" }}
             />
+
+            {/* Basic Info */}
             <h3 className="h5">{user.full_name}</h3>
             <p className="text-muted">{user.role.toUpperCase()}</p>
             <hr />
             <p><strong>Mobile:</strong> {user.mobile_number}</p>
             <p><strong>Address:</strong> {user.address || "Not provided"}</p>
 
-            {/* ✅ Render based on Role */}
+            {/* ✅ Role Based Rendering */}
             {user.role === "doctor" ? (
               <DoctorProfile user={user} setUser={setUser} />
             ) : (
-              <PatientAppointments bookedAppointments={user.booked_appointments} />
+              <>
+                <PatientProfile user={user} setUser={setUser} />
+                <PatientAppointments bookedAppointments={user.booked_appointments} />
+              </>
             )}
           </div>
         </div>
