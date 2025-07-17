@@ -39,6 +39,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import DoctorDetail from "./pages/DoctorDetail";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/doctors/:id" element={<DoctorDetail />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );

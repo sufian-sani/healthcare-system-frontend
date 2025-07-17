@@ -15,6 +15,12 @@ export default function Navbar() {
           <Link to="/register" className="btn btn-light text-primary">
             Register
           </Link>
+          <Link
+            to="/profile"
+            className="btn btn-outline-light ms-2"
+          >
+            Profile
+          </Link>
         </nav>
       </div>
     </header>

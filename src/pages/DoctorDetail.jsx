@@ -17,9 +17,9 @@ export default function DoctorDetail() {
   }, [id]);
 
   console.log(doctor);
-  
 
-  const handleBook = async (schedule, selectedSlot) => {
+
+  const handleBook = async (schedule, selectedSlot, notes) => {
     try {
       const token = localStorage.getItem("access");
       await axios.post(
@@ -28,16 +28,17 @@ export default function DoctorDetail() {
           doctor: doctor.id,
           schedule: schedule.id,
           date: schedule.date,
-          appointment_time: selectedSlot
+          appointment_time: selectedSlot,
+          notes: notes, // ✅ include notes
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      alert(`Appointment booked successfully at ${selectedSlot}`);
+      alert(`✅ Appointment booked at ${selectedSlot}`);
       setSelectedSchedule(null);
     } catch (err) {
-      alert("Failed to book appointment");
+      alert("❌ Failed to book appointment");
       console.error(err);
     }
   };
