@@ -67,13 +67,15 @@ export default function Profile() {
             <p><strong>Address:</strong> {user.address || "Not provided"}</p>
 
             {/* ✅ Role Based Rendering */}
-            {user.role === "doctor" ? (
-              <DoctorProfile user={user} setUser={setUser} />
-            ) : (
-              <>
-                <PatientProfile user={user} setUser={setUser} />
-                <PatientAppointments bookedAppointments={user.booked_appointments} />
-              </>
+            {(user.role === "doctor" || user.role === "patient") && (
+              user.role === "doctor" ? (
+                <DoctorProfile user={user} setUser={setUser} />
+              ) : (
+                <>
+                  <PatientProfile user={user} setUser={setUser} />
+                  <PatientAppointments bookedAppointments={user.booked_appointments} />
+                </>
+              )
             )}
           </div>
         </div>

@@ -18,10 +18,11 @@ export default function Login() {
       // Save token and role in localStorage
       localStorage.setItem("access", res.data.access);
       localStorage.setItem("role", res.data.role);
+      localStorage.setItem("full_name", res.data.full_name);
 
       // Redirect based on role
       res.data.role === "doctor"
-        ? navigate("/doctor/dashboard")
+        ? navigate("/")
         : navigate("/");
     } catch (err) {
       alert("Invalid credentials or server error");

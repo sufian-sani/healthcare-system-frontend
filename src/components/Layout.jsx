@@ -7,14 +7,6 @@ export default function Layout({ children }) {
       {/* Header */}
       <Navbar />
 
-      {localStorage.getItem("role") === "admin" && (
-        <li className="nav-item">
-          <Link className="nav-link" to="/admin">
-            Admin
-          </Link>
-        </li>
-      )}
-
       {/* Main Content */}
       <main className="nav-link">
         {children}
