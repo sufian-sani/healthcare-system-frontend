@@ -37,6 +37,9 @@ export default function Navbar() {
               <Link to="/login" className="btn btn-light text-primary">
                 Login
               </Link>
+              <Link to="/register-doctor" className="btn btn-light text-primary">
+                Register as Doctor
+              </Link>
               <Link to="/register" className="btn btn-light text-primary">
                 Register
               </Link>

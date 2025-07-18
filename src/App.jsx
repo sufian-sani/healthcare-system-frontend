@@ -42,6 +42,7 @@ import DoctorDetail from "./pages/DoctorDetail";
 import Profile from "./pages/Profile";
 import AdminPage from "./pages/AdminPage";
 import AdminReports from "./pages/AdminReports";
+import DoctorRegister from "./pages/DoctorRegister";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/register-doctor" element={<DoctorRegister />} />
       </Routes>
     </Router>
   );

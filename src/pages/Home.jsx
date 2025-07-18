@@ -86,7 +86,8 @@ export default function Home() {
             const isIncomplete =
               !doctor.doctordetail?.license_number ||
               !doctor.doctordetail?.experience_years ||
-              !doctor.doctordetail?.consultation_fee;
+              !doctor.doctordetail?.consultation_fee ||
+              !doctor.schedule || doctor.schedule.length === 0;
 
             return (
               <div key={doctor.id} className="col-md-6 col-lg-4">
