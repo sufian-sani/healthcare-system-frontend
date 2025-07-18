@@ -21,6 +21,9 @@ export default function Navbar() {
           >
             Profile
           </Link>
+          <Link to="/admin/reports" className="btn btn-info btn-sm">
+            View Reports
+          </Link>
         </nav>
       </div>
     </header>

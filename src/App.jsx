@@ -40,6 +40,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import DoctorDetail from "./pages/DoctorDetail";
 import Profile from "./pages/Profile";
+import AdminPage from "./pages/AdminPage";
+import AdminReports from "./pages/AdminReports";
 
 function App() {
   return (
@@ -50,6 +52,8 @@ function App() {
         <Route path="/doctors/:id" element={<DoctorDetail />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/reports" element={<AdminReports />} />
       </Routes>
     </Router>
   );

@@ -7,8 +7,16 @@ export default function Layout({ children }) {
       {/* Header */}
       <Navbar />
 
+      {localStorage.getItem("role") === "admin" && (
+        <li className="nav-item">
+          <Link className="nav-link" to="/admin">
+            Admin
+          </Link>
+        </li>
+      )}
+
       {/* Main Content */}
-      <main className="flex-grow-1 container py-4">
+      <main className="nav-link">
         {children}
       </main>
 
