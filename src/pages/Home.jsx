@@ -7,17 +7,15 @@ export default function Home() {
   const [doctors, setDoctors] = useState([]);
   const [specialization, setSpecialization] = useState("");
   const [location, setLocation] = useState("");
-  const [availableDate, setAvailableDate] = useState(""); // store as YYYY-MM-DD
+  const [availableDate, setAvailableDate] = useState("");
   const navigate = useNavigate();
 
-  // ✅ Convert date only when calling API
   const formatDateForAPI = (date) => {
     if (!date) return "";
     const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`; // API expects DD/MM/YYYY
+    return `${day}/${month}/${year}`;
   };
 
-  // ✅ Fetch Doctors (All or Filtered)
   const fetchDoctors = async (spec = "", loc = "", available = "") => {
     try {
       const res = await axios.get("http://127.0.0.1:8000/api/users/doctors/", {
@@ -33,7 +31,6 @@ export default function Home() {
     }
   };
 
-  // ✅ Load All Doctors on Page Load
   useEffect(() => {
     fetchDoctors();
   }, []);
@@ -80,7 +77,7 @@ export default function Home() {
           type="date"
           className="form-control w-25"
           value={availableDate}
-          onChange={(e) => setAvailableDate(e.target.value)} // store YYYY-MM-DD
+          onChange={(e) => setAvailableDate(e.target.value)}
         />
         <button className="btn btn-primary" onClick={handleSearch}>
           Search
@@ -131,28 +128,39 @@ export default function Home() {
                     </p>
                     <p className="text-secondary">Address: {doctor.address}</p>
                     <p className="text-secondary">
-                      Specialization: {doctor.specialization || "Not provided"}
+                      Specialization:{" "}
+                      {doctor.doctordetail?.specialization || "Not provided"}
                     </p>
                     <p className="text-secondary">
-                      Location: {doctor.location || "Not provided"}
+                      Location: {doctor.doctordetail?.location || "Not provided"}
                     </p>
 
                     {doctor.doctordetail ? (
                       <div className="mt-3 small text-start">
                         <p>License: {doctor.doctordetail.license_number}</p>
                         <p>
-                          Experience: {doctor.doctordetail.experience_years}{" "}
-                          years
+                          Experience: {doctor.doctordetail.experience_years} years
                         </p>
                         <p>
-                          Consultation Fee:{" "}
-                          {doctor.doctordetail.consultation_fee} BDT
+                          Consultation Fee: {doctor.doctordetail.consultation_fee}{" "}
+                          BDT
                         </p>
                       </div>
                     ) : (
                       <p className="text-danger small mt-2">
                         Doctor details missing
                       </p>
+                    )}
+
+                    {doctor.schedule && doctor.schedule.length > 0 && (
+                      <div className="mt-3 small text-start">
+                        <p className="fw-bold">Available Schedules:</p>
+                        {doctor.schedule.map((slot) => (
+                          <p key={slot.id} className="text-secondary">
+                            {slot.date} ({slot.start_time} - {slot.end_time})
+                          </p>
+                        ))}
+                      </div>
                     )}
 
                     <button

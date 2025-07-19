@@ -145,26 +145,28 @@ export default function DoctorRegister() {
         mobile_number: formData.mobile_number,
         password: formData.password,
         address: fullAddress,
-        location: fullAddress, // ✅ same as address
         license_number: formData.license_number,
         experience_years: parseInt(formData.experience_years),
         consultation_fee: parseFloat(formData.consultation_fee),
         specialization: formData.specialization,
+        location: fullAddress, // ✅ If you want a separate value, change here
         available_timeslots: timeslots.filter(
           (t) => t.date && t.start_time && t.end_time
         ),
-        role: "doctor",
       };
 
-      await axios.post("http://127.0.0.1:8000/api/users/register/", payload);
+      console.log("✅ Sending Payload:", payload); // Debugging
+
+      await axios.post("http://127.0.0.1:8000/api/users/signup/doctor/", payload);
 
       alert("Doctor registered successfully!");
-      navigate("/login");
+      navigate("/");
     } catch (err) {
-      console.error("Registration error:", err);
+      console.error("Registration error:", err.response?.data || err);
       alert("Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
