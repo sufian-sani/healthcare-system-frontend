@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
@@ -10,14 +10,21 @@ export default function DoctorRegister() {
     password: "",
     confirm_password: "",
     mobile_number: "",
-    address: "",
     license_number: "",
     experience_years: "",
     consultation_fee: "",
     specialization: "",
     location: "",
-    role: "doctor", // ✅ Default doctor role
+    role: "doctor",
   });
+
+  const [divisions, setDivisions] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [thanas, setThanas] = useState([]);
+
+  const [selectedDivision, setSelectedDivision] = useState({ id: "", name: "" });
+  const [selectedDistrict, setSelectedDistrict] = useState({ id: "", name: "" });
+  const [selectedThana, setSelectedThana] = useState({ id: "", name: "" });
 
   const [timeslots, setTimeslots] = useState([
     { date: "", start_time: "", end_time: "" },
@@ -25,6 +32,46 @@ export default function DoctorRegister() {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // ✅ Fetch divisions
+  useEffect(() => {
+    const fetchDivisions = async () => {
+      const res = await fetch("https://bdapi.vercel.app/api/v.1/division");
+      const data = await res.json();
+      setDivisions(data.data);
+    };
+    fetchDivisions();
+  }, []);
+
+  // ✅ Fetch districts based on division
+  useEffect(() => {
+    if (!selectedDivision.id) return;
+    const fetchDistricts = async () => {
+      const res = await fetch(
+        `https://bdapi.vercel.app/api/v.1/district/${selectedDivision.id}`
+      );
+      const data = await res.json();
+      setDistricts(data.data);
+      setThanas([]);
+      setSelectedDistrict({ id: "", name: "" });
+      setSelectedThana({ id: "", name: "" });
+    };
+    fetchDistricts();
+  }, [selectedDivision.id]);
+
+  // ✅ Fetch upazilas (Thanas) based on district
+  useEffect(() => {
+    if (!selectedDistrict.id) return;
+    const fetchThanas = async () => {
+      const res = await fetch(
+        `https://bdapi.vercel.app/api/v.1/upazilla/${selectedDistrict.id}`
+      );
+      const data = await res.json();
+      setThanas(data.data);
+      setSelectedThana({ id: "", name: "" });
+    };
+    fetchThanas();
+  }, [selectedDistrict.id]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -44,23 +91,62 @@ export default function DoctorRegister() {
     setTimeslots(timeslots.filter((_, i) => i !== index));
   };
 
+  const validateForm = () => {
+    const {
+      full_name,
+      email,
+      mobile_number,
+      password,
+      confirm_password,
+      license_number,
+      experience_years,
+      consultation_fee,
+      specialization,
+      location,
+    } = formData;
+
+    if (
+      !full_name ||
+      !email ||
+      !mobile_number ||
+      !password ||
+      !confirm_password ||
+      !license_number ||
+      !experience_years ||
+      !consultation_fee ||
+      !specialization ||
+      !location ||
+      !selectedDivision.name ||
+      !selectedDistrict.name ||
+      !selectedThana.name
+    ) {
+      alert("All fields are required!");
+      return false;
+    }
+
+    if (password !== confirm_password) {
+      alert("Passwords do not match!");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (formData.password !== formData.confirm_password) {
-      alert("Passwords do not match!");
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       setLoading(true);
+
+      const fullAddress = `${selectedDivision.name}, ${selectedDistrict.name}, ${selectedThana.name}`;
 
       const payload = {
         full_name: formData.full_name,
         email: formData.email,
         mobile_number: formData.mobile_number,
         password: formData.password,
-        address: formData.address,
+        address: fullAddress,
         license_number: formData.license_number,
         experience_years: parseInt(formData.experience_years),
         consultation_fee: parseFloat(formData.consultation_fee),
@@ -125,16 +211,79 @@ export default function DoctorRegister() {
             />
           </div>
 
+          {/* ✅ Address Selector */}
           <div className="mb-3">
-            <label className="form-label">Address</label>
-            <input
-              type="text"
-              name="address"
+            <label className="form-label">Division</label>
+            <select
               className="form-control"
-              value={formData.address}
-              onChange={handleChange}
-              required
-            />
+              value={selectedDivision.id}
+              onChange={(e) => {
+                const selected = divisions.find(
+                  (d) => d.id === e.target.value
+                );
+                setSelectedDivision({
+                  id: selected.id,
+                  name: selected.name,
+                });
+              }}
+            >
+              <option value="">Select Division</option>
+              {divisions.map((div) => (
+                <option key={div.id} value={div.id}>
+                  {div.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">District</label>
+            <select
+              className="form-control"
+              value={selectedDistrict.id}
+              onChange={(e) => {
+                const selected = districts.find(
+                  (d) => d.id === e.target.value
+                );
+                setSelectedDistrict({
+                  id: selected.id,
+                  name: selected.name,
+                });
+              }}
+              disabled={!selectedDivision.id}
+            >
+              <option value="">Select District</option>
+              {districts.map((dis) => (
+                <option key={dis.id} value={dis.id}>
+                  {dis.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Thana / Upazila</label>
+            <select
+              className="form-control"
+              value={selectedThana.id}
+              onChange={(e) => {
+                const selected = thanas.find(
+                  (t) => t.id === e.target.value
+                );
+                setSelectedThana({
+                  id: selected.id,
+                  name: selected.name,
+                });
+              }}
+              disabled={!selectedDistrict.id}
+            >
+              <option value="">Select Thana</option>
+              {thanas.map((thana) => (
+                <option key={thana.id} value={thana.id}>
+                  {thana.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* ✅ Doctor Details */}
