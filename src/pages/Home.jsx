@@ -7,15 +7,24 @@ export default function Home() {
   const [doctors, setDoctors] = useState([]);
   const [specialization, setSpecialization] = useState("");
   const [location, setLocation] = useState("");
+  const [availableDate, setAvailableDate] = useState(""); // store as YYYY-MM-DD
   const navigate = useNavigate();
 
+  // ✅ Convert date only when calling API
+  const formatDateForAPI = (date) => {
+    if (!date) return "";
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year}`; // API expects DD/MM/YYYY
+  };
+
   // ✅ Fetch Doctors (All or Filtered)
-  const fetchDoctors = async (spec = "", loc = "") => {
+  const fetchDoctors = async (spec = "", loc = "", available = "") => {
     try {
       const res = await axios.get("http://127.0.0.1:8000/api/users/doctors/", {
         params: {
           specialization: spec || undefined,
           location: loc || undefined,
+          available: available ? formatDateForAPI(available) : undefined,
         },
       });
       setDoctors(res.data);
@@ -26,11 +35,18 @@ export default function Home() {
 
   // ✅ Load All Doctors on Page Load
   useEffect(() => {
-    fetchDoctors(); // <-- Load all doctors when page loads
+    fetchDoctors();
   }, []);
 
   const handleSearch = () => {
-    fetchDoctors(specialization, location);
+    fetchDoctors(specialization, location, availableDate);
+  };
+
+  const handleReset = () => {
+    setSpecialization("");
+    setLocation("");
+    setAvailableDate("");
+    fetchDoctors();
   };
 
   return (
@@ -60,17 +76,16 @@ export default function Home() {
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         />
+        <input
+          type="date"
+          className="form-control w-25"
+          value={availableDate}
+          onChange={(e) => setAvailableDate(e.target.value)} // store YYYY-MM-DD
+        />
         <button className="btn btn-primary" onClick={handleSearch}>
           Search
         </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => {
-            setSpecialization("");
-            setLocation("");
-            fetchDoctors(); // Reset to all doctors
-          }}
-        >
+        <button className="btn btn-secondary" onClick={handleReset}>
           Reset
         </button>
       </div>
@@ -87,7 +102,8 @@ export default function Home() {
               !doctor.doctordetail?.license_number ||
               !doctor.doctordetail?.experience_years ||
               !doctor.doctordetail?.consultation_fee ||
-              !doctor.schedule || doctor.schedule.length === 0;
+              !doctor.schedule ||
+              doctor.schedule.length === 0;
 
             return (
               <div key={doctor.id} className="col-md-6 col-lg-4">

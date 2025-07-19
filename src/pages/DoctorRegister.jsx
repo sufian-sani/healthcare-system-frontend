@@ -102,7 +102,6 @@ export default function DoctorRegister() {
       experience_years,
       consultation_fee,
       specialization,
-      location,
     } = formData;
 
     if (
@@ -115,7 +114,6 @@ export default function DoctorRegister() {
       !experience_years ||
       !consultation_fee ||
       !specialization ||
-      !location ||
       !selectedDivision.name ||
       !selectedDistrict.name ||
       !selectedThana.name
@@ -147,11 +145,11 @@ export default function DoctorRegister() {
         mobile_number: formData.mobile_number,
         password: formData.password,
         address: fullAddress,
+        location: fullAddress, // ✅ same as address
         license_number: formData.license_number,
         experience_years: parseInt(formData.experience_years),
         consultation_fee: parseFloat(formData.consultation_fee),
         specialization: formData.specialization,
-        location: formData.location,
         available_timeslots: timeslots.filter(
           (t) => t.date && t.start_time && t.end_time
         ),
@@ -335,17 +333,6 @@ export default function DoctorRegister() {
             />
           </div>
 
-          <div className="mb-3">
-            <label className="form-label">Location</label>
-            <input
-              type="text"
-              name="location"
-              className="form-control"
-              value={formData.location}
-              onChange={handleChange}
-              required
-            />
-          </div>
 
           {/* ✅ Available Timeslots */}
           <h6 className="mt-3">Available Timeslots</h6>
